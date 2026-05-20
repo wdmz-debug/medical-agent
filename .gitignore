@@ -1,0 +1,58 @@
+# ============================
+# Python / Backend
+# ============================
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# Environment & secrets
+.env
+.env.local
+.env.*.local
+
+# Database & vector store
+*.db
+*.sqlite3
+chroma_db/
+
+# Logs
+*.log
+
+# ============================
+# Node / Frontend
+# ============================
+node_modules/
+.next/
+out/
+.vercel/
+
+# Build output
+*.tsbuildinfo
+next-env.d.ts
+
+# ============================
+# IDE / Editor
+# ============================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ============================
+# OS
+# ============================
+Desktop.ini
+ehthumbs.db
