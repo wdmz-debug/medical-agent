@@ -12,6 +12,7 @@ interface PipelineStep {
   tool_used: string;
   content: string;
   icon_type: string;
+  agent_role?: string;
 }
 
 interface AgentThoughtTimelineProps {
@@ -28,6 +29,12 @@ const ICON_MAP: Record<string, { icon: React.ComponentType<any>; color: string }
   "file-text":  { icon: FileText,      color: "#00ff88" },
   brain:        { icon: Brain,         color: "#ff3366" },
   clipboard:    { icon: ClipboardList, color: "#00f0ff" },
+};
+
+const AGENT_ROLE_CONFIG: Record<string, { label: string; color: string; bg: string; border: string }> = {
+  DataAgent:      { label: "Data",      color: "#60a5fa", bg: "rgba(96,165,250,0.12)",  border: "rgba(96,165,250,0.25)" },
+  KnowledgeAgent: { label: "Knowledge", color: "#a78bfa", bg: "rgba(167,139,250,0.12)", border: "rgba(167,139,250,0.25)" },
+  ChiefAgent:     { label: "Chief",     color: "#fbbf24", bg: "rgba(251,191,36,0.12)",  border: "rgba(251,191,36,0.25)" },
 };
 
 function formatTime(ts: string): string {
@@ -216,6 +223,18 @@ export default function AgentThoughtTimeline({ steps, onRunAnalysis, loading, on
                       )}
                     </div>
                     <div className="flex items-center gap-2 shrink-0 ml-2">
+                      {step.agent_role && AGENT_ROLE_CONFIG[step.agent_role] && (
+                        <span
+                          className="text-[10px] px-1.5 py-0.5 rounded font-medium"
+                          style={{
+                            background: AGENT_ROLE_CONFIG[step.agent_role].bg,
+                            color: AGENT_ROLE_CONFIG[step.agent_role].color,
+                            border: `1px solid ${AGENT_ROLE_CONFIG[step.agent_role].border}`,
+                          }}
+                        >
+                          {AGENT_ROLE_CONFIG[step.agent_role].label}
+                        </span>
+                      )}
                       <span
                         className="text-[10px] px-1.5 py-0.5 rounded"
                         style={{ background: `${config.color}12`, color: config.color, border: `1px solid ${config.color}20` }}

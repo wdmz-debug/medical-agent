@@ -1,3 +1,5 @@
+from datetime import datetime, timedelta
+
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from database import get_db
@@ -5,6 +7,29 @@ from models import Device, SensorLog, Document, AnalysisResult
 from schemas import DeviceOut, DeviceDetail
 
 router = APIRouter(prefix="/api/devices", tags=["devices"])
+
+
+def _build_uci_cnc_logs():
+    """Build synthetic sensor logs from UCI AI4I 2020 dataset for CNC-01."""
+    from main import UCI_CNC_DATA
+    now = datetime.now()
+    logs = []
+    for i, row in enumerate(UCI_CNC_DATA):
+        ts = now - timedelta(hours=len(UCI_CNC_DATA) - i)
+        temp_c = round(row["process_temp"] - 273.15, 1)
+        logs.append({
+            "id": 1000 + i,
+            "device_id": 1,
+            "timestamp": ts.isoformat(),
+            "temperature": temp_c,
+            "vibration": row["vibration"],
+            "power_consumption": round(row["torque"] * row["rpm"] / 9549 * 1000, 0),  # approximate watts
+            "fan_speed": row["rpm"],
+            "load": round(row["torque"] / 46.8 * 100, 1),  # normalized load %
+            "alarm_code": None if row["label"] == "正常" else row["label"],
+            "extra_data": {"air_temp_k": row["air_temp"], "torque_nm": row["torque"], "label": row["label"]},
+        })
+    return logs
 
 
 @router.get("", response_model=list[DeviceOut])
@@ -86,18 +111,11 @@ def get_device(device_id: int, db: Session = Depends(get_db)):
             "created_at": analysis.created_at.isoformat() if analysis.created_at else None,
         }
 
-    return DeviceDetail(
-        id=device.id,
-        name=device.name,
-        device_type=device.device_type,
-        status=device.status,
-        health_score=device.health_score,
-        location=device.location,
-        description=device.description,
-        meta_info=device.meta_info or {},
-        created_at=device.created_at,
-        updated_at=device.updated_at,
-        recent_logs=[
+    # For CNC-01, inject UCI AI4I 2020 dataset as sensor logs
+    if device.name == "CNC-01":
+        uci_logs = _build_uci_cnc_logs()
+    else:
+        uci_logs = [
             {
                 "id": log.id,
                 "device_id": log.device_id,
@@ -111,7 +129,20 @@ def get_device(device_id: int, db: Session = Depends(get_db)):
                 "extra_data": log.extra_data or {},
             }
             for log in logs
-        ],
+        ]
+
+    return DeviceDetail(
+        id=device.id,
+        name=device.name,
+        device_type=device.device_type,
+        status=device.status,
+        health_score=device.health_score,
+        location=device.location,
+        description=device.description,
+        meta_info=device.meta_info or {},
+        created_at=device.created_at,
+        updated_at=device.updated_at,
+        recent_logs=uci_logs,
         recent_documents=[
             {
                 "id": doc.id,

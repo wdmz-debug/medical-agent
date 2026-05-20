@@ -9,7 +9,7 @@ DEVICES = [
         "name": "CNC-01",
         "device_type": "数控机床",
         "status": "warning",
-        "health_score": 72.0,
+        "health_score": 65.0,
         "location": "A车间-1号线",
         "description": "五轴联动数控加工中心，用于精密零件加工",
         "meta_info": {"manufacturer": "DMG MORI", "model": "DMU 50", "install_date": "2022-03-15"},
@@ -63,7 +63,7 @@ DEVICES = [
 
 # Sensor baseline profiles per device type
 SENSOR_PROFILES = {
-    "数控机床": {"temp_base": 42, "temp_var": 8, "vib_base": 2.5, "vib_var": 1.5, "power_base": 15, "power_var": 5, "fan_base": 2800, "fan_var": 600, "load_base": 65, "load_var": 20},
+    "数控机床": {"temp_base": 35, "temp_var": 3, "vib_base": 2.1, "vib_var": 1.7, "power_base": 8, "power_var": 4, "fan_base": 1512, "fan_var": 213, "load_base": 67, "load_var": 20},
     "工业泵": {"temp_base": 35, "temp_var": 5, "vib_base": 1.8, "vib_var": 0.8, "power_base": 22, "power_var": 4, "fan_base": 0, "fan_var": 0, "load_base": 70, "load_var": 15},
     "工业风机": {"temp_base": 30, "temp_var": 4, "vib_base": 3.0, "vib_var": 1.0, "power_base": 8, "power_var": 3, "fan_base": 1200, "fan_var": 300, "load_base": 55, "load_var": 15},
     "空压机": {"temp_base": 55, "temp_var": 12, "vib_base": 4.0, "vib_var": 2.5, "power_base": 35, "power_var": 8, "fan_base": 3200, "fan_var": 800, "load_base": 80, "load_var": 15},
@@ -73,7 +73,7 @@ SENSOR_PROFILES = {
 
 # Degradation patterns for devices that should show issues
 DEGRADATION = {
-    "CNC-01": {"temp_drift": 0.3, "vib_drift": 0.05, "start_day": 15},  # gradual temp rise
+    "CNC-01": {"temp_drift": 0.12, "vib_drift": 0.06, "start_day": 12},  # UCI HDF progression
     "COMP-04": {"temp_drift": 0.8, "vib_drift": 0.15, "start_day": 5},  # severe degradation
     "SERVER-05": {"temp_drift": 0.4, "fan_lag": True, "start_day": 10},  # cooling issue
 }
@@ -92,17 +92,17 @@ SAMPLE_DOCUMENTS = [
 4. 刀库检查：确认刀具夹紧力正常，换刀机构无异常
 
 温度报警阈值：
-- 主轴温度超过65°C时系统自动降速
-- 超过75°C时自动停机保护
+- 主轴温度超过45°C时系统自动降速
+- 超过55°C时自动停机保护
 - 环境温度应保持在20-30°C
 
 振动标准：
-- 正常运行振动值应低于3.0 mm/s
-- 3.0-5.0 mm/s为警告区间
+- 正常运行振动值应低于3.5 mm/s
+- 3.5-5.0 mm/s为警告区间
 - 超过5.0 mm/s需要立即停机检查
 
 常见故障及处理：
-1. 主轴过热：检查润滑系统、冷却水路、轴承磨损
+1. 散热故障(HDF)：检查冷却水路流量、散热风扇状态、导热界面完整性
 2. 加工精度下降：检查丝杠间隙、导轨磨损、热变形
 3. 换刀故障：检查刀库定位、气压、夹紧机构
 """,
@@ -113,8 +113,8 @@ SAMPLE_DOCUMENTS = [
         "doc_type": "fault_case",
         "content": """故障案例记录 - CNC-01
 
-案例1: 2024-08-15 主轴过热停机
-现象：主轴温度持续上升至78°C触发停机保护
+案例1: 2024-08-15 散热故障(HDF)停机
+现象：加工温度持续上升，振动同步升高，系统标记散热故障(HDF)
 原因：冷却水路堵塞导致散热效率下降
 处理：清洗冷却水路，更换冷却液，检查水泵
 预防：每月检查冷却水路流量

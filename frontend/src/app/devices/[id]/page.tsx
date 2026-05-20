@@ -74,6 +74,7 @@ export default function DeviceDetailPage() {
       setCurrentAnalysis({
         status: result.status,
         health_score: result.health_score,
+        remaining_useful_life_days: result.remaining_useful_life_days ?? undefined,
         risk_probability: result.draft_work_order ? (100 - result.health_score) / 100 : 0,
         pipeline_steps: result.pipeline_steps || [],
         evidence_sources: result.evidence_sources || [],

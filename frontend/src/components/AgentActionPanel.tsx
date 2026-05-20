@@ -25,6 +25,7 @@ interface AgentActionPanelProps {
     status: string;
     health_score: number;
     risk_probability?: number;
+    remaining_useful_life_days?: number;
     evidence_sources: EvidenceSource[];
     draft_work_order: DraftWorkOrder;
   };
@@ -41,6 +42,7 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
   const statusColor = analysis.status === "critical" ? "#ff3366" : analysis.status === "warning" ? "#ffaa00" : "#00ff88";
   const statusLabel = analysis.status === "critical" ? "高危" : analysis.status === "warning" ? "警告" : "健康";
   const riskPct = Math.round((analysis.risk_probability ?? (100 - analysis.health_score) / 100) * 100);
+  const rulDays = analysis.remaining_useful_life_days;
   const evidenceSources = analysis.evidence_sources ?? [];
   const workOrder = analysis.draft_work_order ?? { title: "", description: "", suggested_parts: [], estimated_time: "" };
   const hasWorkOrder = analysisComplete && !!workOrder.title;
@@ -82,6 +84,54 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
             />
           </div>
         </div>
+
+        {/* RUL countdown */}
+        {analysisComplete && rulDays != null && (
+          <div className="mt-3 animate-fade-in">
+            <div
+              className="rounded-md px-3 py-2.5"
+              style={{
+                background: rulDays <= 7 ? "rgba(255,51,102,0.08)" : rulDays <= 14 ? "rgba(255,170,0,0.08)" : "rgba(0,240,255,0.05)",
+                border: `1px solid ${rulDays <= 7 ? "rgba(255,51,102,0.25)" : rulDays <= 14 ? "rgba(255,170,0,0.25)" : "rgba(0,240,255,0.15)"}`,
+              }}
+            >
+              <div className="flex items-center justify-between mb-1.5">
+                <span className="text-[10px] text-zinc-500 flex items-center gap-1">
+                  <Clock size={10} /> 预计剩余寿命
+                </span>
+                <span
+                  className="text-[10px] px-1.5 py-0.5 rounded-full font-medium tabular-nums"
+                  style={{
+                    color: rulDays <= 7 ? "#ff3366" : rulDays <= 14 ? "#ffaa00" : "#00f0ff",
+                    background: rulDays <= 7 ? "rgba(255,51,102,0.1)" : rulDays <= 14 ? "rgba(255,170,0,0.1)" : "rgba(0,240,255,0.1)",
+                    border: `1px solid ${rulDays <= 7 ? "rgba(255,51,102,0.2)" : rulDays <= 14 ? "rgba(255,170,0,0.2)" : "rgba(0,240,255,0.2)"}`,
+                  }}
+                >
+                  {rulDays <= 7 ? "紧急" : rulDays <= 14 ? "临近" : "安全"}
+                </span>
+              </div>
+              <div className="flex items-baseline gap-1.5">
+                <span
+                  className="text-3xl font-black tabular-nums"
+                  style={{
+                    color: rulDays <= 7 ? "#ff3366" : rulDays <= 14 ? "#ffaa00" : "#00f0ff",
+                    textShadow: rulDays <= 7 ? "0 0 20px rgba(255,51,102,0.3)" : rulDays <= 14 ? "0 0 20px rgba(255,170,0,0.3)" : "none",
+                  }}
+                >
+                  {rulDays}
+                </span>
+                <span className="text-xs text-zinc-500">天</span>
+              </div>
+              <p className="text-[10px] text-zinc-500 mt-1.5 leading-relaxed">
+                {rulDays <= 7
+                  ? "建议立即安排停机维护，避免突发故障"
+                  : rulDays <= 14
+                    ? "建议在寿命耗尽前安排预防性维护"
+                    : "设备运行稳定，按计划执行定期维护即可"}
+              </p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Evidence sources */}

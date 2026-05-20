@@ -65,6 +65,22 @@ def _index_sample_docs():
         db.close()
 
 
+UCI_CNC_DATA = [
+    {"air_temp": 298.1, "process_temp": 308.2, "rpm": 1512, "torque": 31.5, "vibration": 2.1, "label": "正常"},
+    {"air_temp": 298.3, "process_temp": 308.5, "rpm": 1520, "torque": 32.0, "vibration": 2.2, "label": "正常"},
+    {"air_temp": 298.6, "process_temp": 309.0, "rpm": 1535, "torque": 33.2, "vibration": 2.3, "label": "正常"},
+    {"air_temp": 298.9, "process_temp": 309.4, "rpm": 1558, "torque": 34.8, "vibration": 2.5, "label": "潜在异常"},
+    {"air_temp": 299.0, "process_temp": 309.8, "rpm": 1580, "torque": 36.5, "vibration": 2.7, "label": "潜在异常"},
+    {"air_temp": 299.1, "process_temp": 310.0, "rpm": 1602, "torque": 38.1, "vibration": 2.9, "label": "退化加剧"},
+    {"air_temp": 299.2, "process_temp": 310.1, "rpm": 1635, "torque": 40.2, "vibration": 3.1, "label": "退化加剧"},
+    {"air_temp": 299.3, "process_temp": 310.3, "rpm": 1668, "torque": 42.5, "vibration": 3.3, "label": "严重警告"},
+    {"air_temp": 299.3, "process_temp": 310.4, "rpm": 1690, "torque": 44.1, "vibration": 3.5, "label": "严重警告"},
+    {"air_temp": 299.4, "process_temp": 310.5, "rpm": 1710, "torque": 45.6, "vibration": 3.6, "label": "严重警告"},
+    {"air_temp": 299.4, "process_temp": 310.5, "rpm": 1718, "torque": 46.2, "vibration": 3.7, "label": "散热故障(HDF)"},
+    {"air_temp": 299.4, "process_temp": 310.6, "rpm": 1725, "torque": 46.8, "vibration": 3.8, "label": "散热故障(HDF)"},
+]
+
+
 @app.get("/")
 def root():
     return {"message": "设备病历本 Agent API", "version": "1.0.0"}

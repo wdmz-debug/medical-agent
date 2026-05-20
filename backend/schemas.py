@@ -111,6 +111,7 @@ class PipelineStep(BaseModel):
     tool_used: str
     content: str
     icon_type: str
+    agent_role: str = ""
 
 
 class EvidenceSource(BaseModel):
@@ -129,6 +130,7 @@ class DraftWorkOrder(BaseModel):
 class AgentAnalysisResponse(BaseModel):
     status: str
     health_score: int
+    remaining_useful_life_days: Optional[int] = None
     pipeline_steps: list[PipelineStep]
     evidence_sources: list[EvidenceSource]
     draft_work_order: DraftWorkOrder

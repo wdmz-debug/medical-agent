@@ -15,6 +15,7 @@ def _build_server05_demo(now: datetime) -> AgentAnalysisResponse:
     return AgentAnalysisResponse(
         status="warning",
         health_score=68,
+        remaining_useful_life_days=14,
         pipeline_steps=[
             PipelineStep(
                 timestamp=(now - timedelta(seconds=5)).isoformat(),
@@ -22,6 +23,7 @@ def _build_server05_demo(now: datetime) -> AgentAnalysisResponse:
                 tool_used="sensor_log_query",
                 content="已拉取 SERVER-05 近 7 天共 28 条传感器采样记录，准备进行时序趋势分析。",
                 icon_type="database",
+                agent_role="DataAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=4)).isoformat(),
@@ -35,6 +37,7 @@ def _build_server05_demo(now: datetime) -> AgentAnalysisResponse:
                     "4. 风扇转速虽已提升至 6800 RPM，但温度仍在爬升，冷却响应不足。"
                 ),
                 icon_type="chart",
+                agent_role="DataAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=3)).isoformat(),
@@ -48,6 +51,7 @@ def _build_server05_demo(now: datetime) -> AgentAnalysisResponse:
                     "- 故障处理流程：温度报警 → 检查风扇转速 → 检查散热器 → 检查导热硅脂。"
                 ),
                 icon_type="search",
+                agent_role="KnowledgeAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=2)).isoformat(),
@@ -62,6 +66,7 @@ def _build_server05_demo(now: datetime) -> AgentAnalysisResponse:
                     "- 该案例与当前温度渐升、风扇响应滞后的症状高度吻合。"
                 ),
                 icon_type="file-text",
+                agent_role="KnowledgeAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=1)).isoformat(),
@@ -77,6 +82,7 @@ def _build_server05_demo(now: datetime) -> AgentAnalysisResponse:
                     "■ 若不干预，预计 3-5 天内触发 CPU 降频保护，影响 AI 训练任务。"
                 ),
                 icon_type="brain",
+                agent_role="ChiefAgent",
             ),
             PipelineStep(
                 timestamp=now.isoformat(),
@@ -84,6 +90,7 @@ def _build_server05_demo(now: datetime) -> AgentAnalysisResponse:
                 tool_used="work_order_generator",
                 content="已根据诊断结论自动生成维护工单草稿，建议 24 小时内安排停机维护。",
                 icon_type="clipboard",
+                agent_role="ChiefAgent",
             ),
         ],
         evidence_sources=[
@@ -133,6 +140,7 @@ def _build_fan03_demo(now: datetime) -> AgentAnalysisResponse:
                 tool_used="sensor_log_query",
                 content="已拉取 FAN-03 近 7 天共 28 条传感器采样记录。",
                 icon_type="database",
+                agent_role="DataAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=4)).isoformat(),
@@ -146,6 +154,7 @@ def _build_fan03_demo(now: datetime) -> AgentAnalysisResponse:
                     "4. 转速 1250 RPM 正常，排除电机控制异常。"
                 ),
                 icon_type="chart",
+                agent_role="DataAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=3)).isoformat(),
@@ -158,6 +167,7 @@ def _build_fan03_demo(now: datetime) -> AgentAnalysisResponse:
                     "- 故障处理指引：振动异常优先检查叶片积灰不均和轴承状态。"
                 ),
                 icon_type="search",
+                agent_role="KnowledgeAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=2)).isoformat(),
@@ -172,6 +182,7 @@ def _build_fan03_demo(now: datetime) -> AgentAnalysisResponse:
                     "- 该案例与当前渐进式振动升高模式吻合。"
                 ),
                 icon_type="file-text",
+                agent_role="KnowledgeAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=1)).isoformat(),
@@ -187,6 +198,7 @@ def _build_fan03_demo(now: datetime) -> AgentAnalysisResponse:
                     "■ 若不处理，预计 1-2 周内振动突破 3.5 mm/s 警戒线，可能损伤轴承。"
                 ),
                 icon_type="brain",
+                agent_role="ChiefAgent",
             ),
             PipelineStep(
                 timestamp=now.isoformat(),
@@ -194,6 +206,7 @@ def _build_fan03_demo(now: datetime) -> AgentAnalysisResponse:
                 tool_used="work_order_generator",
                 content="已根据诊断结论自动生成维护工单草稿，建议本周内安排叶片清洁。",
                 icon_type="clipboard",
+                agent_role="ChiefAgent",
             ),
         ],
         evidence_sources=[
@@ -233,30 +246,33 @@ def _build_fan03_demo(now: datetime) -> AgentAnalysisResponse:
 
 
 def _build_cnc01_demo(now: datetime) -> AgentAnalysisResponse:
-    """CNC-01 Demo: 主轴温度偏高 -> 冷却水路隐患 -> 生成预防性维护工单"""
+    """CNC-01 Demo: 散热故障(HDF) — UCI AI4I 2020 数据驱动"""
     return AgentAnalysisResponse(
         status="warning",
-        health_score=72,
+        health_score=65,
+        remaining_useful_life_days=21,
         pipeline_steps=[
             PipelineStep(
                 timestamp=(now - timedelta(seconds=5)).isoformat(),
                 action="获取传感器日志",
                 tool_used="sensor_log_query",
-                content="已拉取 CNC-01 近 7 天共 28 条传感器采样记录，准备进行时序趋势分析。",
+                content="已拉取 CNC-01 近 7 天共 12 条 UCI AI4I 2020 传感器采样记录，准备进行时序趋势分析。",
                 icon_type="database",
+                agent_role="DataAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=4)).isoformat(),
                 action="趋势分析与异常检测",
                 tool_used="sensor_trend_analyzer",
                 content=(
-                    "分析发现关键异常：\n"
-                    "1. 主轴温度 7 日均值 58°C，呈持续上升趋势（+4°C/周），逼近 65°C 自动降速阈值。\n"
-                    "2. 振动值 2.8 mm/s，较基线 2.5 mm/s 上升 12%，接近 3.0 mm/s 警告线。\n"
-                    "3. 功耗 18kW 略高于正常水平，与负载不匹配。\n"
-                    "4. 冷却系统流量未见明显下降，但温度仍在爬升，暗示散热效率正在退化。"
+                    "基于 UCI AI4I 2020 数据集分析，发现关键异常：\n"
+                    "1. 加工温度（process_temp）从 35.1°C 持续攀升至 37.5°C（+2.4°C/周），趋势明确。\n"
+                    "2. 振动值从基线 2.1 mm/s 飙升至 3.8 mm/s，已突破 3.5 mm/s 警告线，涨幅 81%。\n"
+                    "3. 主轴转速从 1512 RPM 爬升至 1725 RPM（+14%），切削扭矩从 31.5 Nm 增至 46.8 Nm（+49%）。\n"
+                    "4. 最近一条数据标记为「散热故障(HDF)」，系统已自动识别散热异常模式。"
                 ),
                 icon_type="chart",
+                agent_role="DataAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=3)).isoformat(),
@@ -264,12 +280,13 @@ def _build_cnc01_demo(now: datetime) -> AgentAnalysisResponse:
                 tool_used="chromadb_retriever",
                 content=(
                     "检索到关键运维文档《CNC-01 维护手册.txt》：\n"
-                    "- 主轴温度报警阈值：超过 65°C 时系统自动降速，超过 75°C 自动停机保护。\n"
-                    "- 振动标准：正常运行应低于 3.0 mm/s，3.0-5.0 mm/s 为警告区间。\n"
-                    "- 常见故障指引：主轴过热应检查润滑系统、冷却水路、轴承磨损。\n"
+                    "- 主轴温度报警阈值：超过 45°C 时系统自动降速，超过 55°C 自动停机保护。\n"
+                    "- 振动标准：正常运行应低于 3.5 mm/s，3.5-5.0 mm/s 为警告区间。\n"
+                    "- 常见故障指引：散热故障(HDF)应优先检查冷却水路、导热界面、散热风扇。\n"
                     "- 文档建议：每 500 小时检查润滑脂状态，每月检查冷却水路流量。"
                 ),
                 icon_type="search",
+                agent_role="KnowledgeAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=2)).isoformat(),
@@ -278,66 +295,72 @@ def _build_cnc01_demo(now: datetime) -> AgentAnalysisResponse:
                 content=(
                     "命中历史故障案例（相似度 0.88）：\n"
                     "【案例 2024-08-15】CNC-01 主轴过热停机\n"
-                    "- 现象：主轴温度持续上升至 78°C 触发停机保护\n"
-                    "- 根因：冷却水路堵塞导致散热效率下降\n"
+                    "- 现象：加工温度持续上升，振动同步升高，扭矩异常增大\n"
+                    "- 根因：冷却水路堵塞导致散热效率下降，系统标签为散热故障(HDF)\n"
                     "- 处理：清洗冷却水路，更换冷却液，检查水泵\n"
                     "- 预防措施：每月检查冷却水路流量\n"
-                    "- 该案例与当前温度渐升模式高度吻合，属于同一设备的历史复发倾向。"
+                    "- 该案例与当前 UCI 数据中的 HDF 故障模式高度吻合，属于同一设备的历史复发倾向。"
                 ),
                 icon_type="file-text",
+                agent_role="KnowledgeAgent",
             ),
             PipelineStep(
                 timestamp=(now - timedelta(seconds=1)).isoformat(),
                 action="综合诊断与风险评估",
                 tool_used="diagnosis_engine",
                 content=(
-                    "综合传感器趋势、运维文档和历史案例，判定：\n"
-                    "■ 风险等级：中风险（健康评分 72/100）\n"
-                    "■ 故障类型：冷却系统效率下降 / 主轴退化风险\n"
-                    "■ 置信度：76%\n"
-                    "■ 推理链：主轴温度持续上升 + 振动同步微升 + 冷却流量未明显下降 → "
-                    "排除水泵故障 → 最可能原因为冷却水路局部堵塞或主轴轴承早期磨损。\n"
+                    "综合 UCI AI4I 2020 传感器数据、运维文档和历史案例，判定：\n"
+                    "■ 风险等级：中高风险（健康评分 65/100）\n"
+                    "■ 故障类型：散热故障(HDF) — 冷却系统效率下降\n"
+                    "■ 置信度：82%\n"
+                    "■ 推理链：process_temp 持续上升 + vibration 从 2.1→3.8 mm/s 突破警告线 + "
+                    "torque 增 49% + UCI 系统标记 HDF → 确认为散热系统退化。\n"
                     "■ 该设备 2024 年 8 月曾因同样原因停机，存在复发风险。\n"
-                    "■ 若不干预，预计 5-7 天内触发 65°C 自动降速，影响加工精度。"
+                    "■ 若不干预，预计 5-7 天内触发 45°C 自动降速，影响加工精度。"
                 ),
                 icon_type="brain",
+                agent_role="ChiefAgent",
             ),
             PipelineStep(
                 timestamp=now.isoformat(),
                 action="生成维护工单草稿",
                 tool_used="work_order_generator",
-                content="已根据诊断结论自动生成预防性维护工单草稿，建议本周内安排停机检修。",
+                content="已根据 UCI AI4I 2020 数据诊断结论自动生成预防性维护工单草稿，建议本周内安排停机检修。",
                 icon_type="clipboard",
+                agent_role="ChiefAgent",
             ),
         ],
         evidence_sources=[
             EvidenceSource(
                 source_name="CNC-01 维护手册.txt",
-                excerpt="主轴温度报警阈值：超过65°C时系统自动降速，超过75°C时自动停机保护。振动标准：正常运行振动值应低于3.0 mm/s，3.0-5.0 mm/s为警告区间。",
+                excerpt="主轴温度报警阈值：超过45°C时系统自动降速，超过55°C时自动停机保护。振动标准：正常运行振动值应低于3.5 mm/s，3.5-5.0 mm/s为警告区间。",
                 confidence=0.94,
             ),
             EvidenceSource(
                 source_name="CNC-01 维护手册.txt",
-                excerpt="常见故障及处理：主轴过热 — 检查润滑系统、冷却水路、轴承磨损。每500小时检查润滑脂状态，必要时补充。",
+                excerpt="常见故障及处理：散热故障(HDF) — 检查冷却水路流量、散热风扇状态、导热界面完整性。每500小时检查润滑脂状态，必要时补充。",
                 confidence=0.90,
             ),
             EvidenceSource(
                 source_name="CNC-01 历史故障案例.txt",
-                excerpt="案例 2024-08-15：主轴温度持续上升至78°C触发停机保护。根因：冷却水路堵塞导致散热效率下降。处理：清洗冷却水路，更换冷却液。",
+                excerpt="案例 2024-08-15：加工温度持续上升，振动同步升高，系统标记散热故障(HDF)。根因：冷却水路堵塞导致散热效率下降。处理：清洗冷却水路，更换冷却液。",
                 confidence=0.88,
             ),
         ],
         draft_work_order=DraftWorkOrder(
-            title="预防性维护：CNC-01 主轴冷却系统检查与轴承状态评估",
+            title="紧急维护：CNC-01 散热故障(HDF)排查与冷却系统检修",
             description=(
-                "AI Agent 诊断发现数控机床主轴温度持续上升（一周内 +4°C，当前 58°C），振动值同步微升至 2.8 mm/s。"
-                "结合维护手册阈值和 2024 年 8 月同类故障案例，判定为冷却水路效率下降或主轴轴承早期退化。\n\n"
+                "AI Agent 基于 UCI AI4I 2020 数据集诊断发现数控机床散热故障(HDF)：\n"
+                "- 加工温度从 35.1°C 持续升至 37.5°C（+2.4°C/周）\n"
+                "- 振动值从 2.1 mm/s 飙升至 3.8 mm/s，突破 3.5 mm/s 警告线\n"
+                "- 切削扭矩从 31.5 Nm 增至 46.8 Nm（+49%），主轴转速 1725 RPM\n"
+                "- UCI 系统自动标记为「散热故障(HDF)」\n\n"
                 "建议操作：\n"
                 "1. 停机后检查冷却水路流量，清洗管路\n"
                 "2. 更换冷却液，检查水泵工作状态\n"
                 "3. 检查主轴润滑脂状态，必要时补充或更换\n"
                 "4. 检测主轴轴承振动频谱，评估轴承健康\n"
-                "5. 恢复加工后持续监控主轴温度 48 小时"
+                "5. 恢复加工后持续监控主轴温度和振动 48 小时"
             ),
             suggested_parts=["主轴润滑脂", "冷却液", "冷却水路清洗套件"],
             estimated_time="建议本周内安排，停机维护约 4 小时",
