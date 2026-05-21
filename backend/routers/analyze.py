@@ -16,6 +16,8 @@ def _build_server05_demo(now: datetime) -> AgentAnalysisResponse:
         status="warning",
         health_score=68,
         remaining_useful_life_days=14,
+        maintenance_cost=1800,
+        estimated_loss=120000,
         pipeline_steps=[
             PipelineStep(
                 timestamp=(now - timedelta(seconds=5)).isoformat(),
@@ -133,6 +135,8 @@ def _build_fan03_demo(now: datetime) -> AgentAnalysisResponse:
     return AgentAnalysisResponse(
         status="warning",
         health_score=74,
+        maintenance_cost=800,
+        estimated_loss=45000,
         pipeline_steps=[
             PipelineStep(
                 timestamp=(now - timedelta(seconds=5)).isoformat(),
@@ -251,6 +255,8 @@ def _build_cnc01_demo(now: datetime) -> AgentAnalysisResponse:
         status="warning",
         health_score=65,
         remaining_useful_life_days=21,
+        maintenance_cost=2500,
+        estimated_loss=85000,
         pipeline_steps=[
             PipelineStep(
                 timestamp=(now - timedelta(seconds=5)).isoformat(),

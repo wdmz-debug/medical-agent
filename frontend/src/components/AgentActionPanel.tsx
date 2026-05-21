@@ -4,7 +4,7 @@ import { useState } from "react";
 import {
   Activity, AlertTriangle, BookOpen, FileText, ClipboardCheck,
   ChevronDown, ChevronRight, Wrench, Clock, Package, CheckCircle,
-  XCircle, Send,
+  XCircle, Send, DollarSign, Loader2,
 } from "lucide-react";
 
 interface EvidenceSource {
@@ -26,14 +26,18 @@ interface AgentActionPanelProps {
     health_score: number;
     risk_probability?: number;
     remaining_useful_life_days?: number;
+    maintenance_cost?: number;
+    estimated_loss?: number;
     evidence_sources: EvidenceSource[];
     draft_work_order: DraftWorkOrder;
   };
   analysisComplete?: boolean;
   onReject?: (feedback: string) => void;
+  onApprove?: () => void;
+  dispatching?: boolean;
 }
 
-export default function AgentActionPanel({ analysis, analysisComplete = false, onReject }: AgentActionPanelProps) {
+export default function AgentActionPanel({ analysis, analysisComplete = false, onReject, onApprove, dispatching }: AgentActionPanelProps) {
   const [showEvidence, setShowEvidence] = useState(true);
   const [orderApproved, setOrderApproved] = useState(false);
   const [rejecting, setRejecting] = useState(false);
@@ -50,8 +54,8 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
   return (
     <div className="flex flex-col gap-3 h-full">
       {/* Big health score */}
-      <div className="rounded-lg p-5 text-center shrink-0" style={{ background: "rgba(24,24,27,0.8)", border: "1px solid #27272a" }}>
-        <div className="text-[11px] text-zinc-500 mb-1">健康评分</div>
+      <div className="rounded-lg p-5 text-center shrink-0" style={{ background: "rgba(24,24,27,0.8)", border: "1px solid #3f3f46" }}>
+        <div className="text-[11px] text-zinc-400 mb-1">健康评分</div>
         <div
           className="text-6xl font-black tabular-nums mb-1 transition-all duration-700"
           style={{ color: statusColor, textShadow: analysisComplete ? `0 0 30px ${statusColor}40` : "none" }}
@@ -68,7 +72,7 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
         {/* Risk bar */}
         <div className="mt-4 text-left">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[11px] text-zinc-500 flex items-center gap-1">
+            <span className="text-[11px] text-zinc-400 flex items-center gap-1">
               <AlertTriangle size={11} /> 故障概率
             </span>
             <span className="text-xs font-bold tabular-nums" style={{ color: statusColor }}>{riskPct}%</span>
@@ -96,7 +100,7 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
               }}
             >
               <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[10px] text-zinc-500 flex items-center gap-1">
+                <span className="text-[10px] text-zinc-400 flex items-center gap-1">
                   <Clock size={10} /> 预计剩余寿命
                 </span>
                 <span
@@ -120,9 +124,9 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
                 >
                   {rulDays}
                 </span>
-                <span className="text-xs text-zinc-500">天</span>
+                <span className="text-xs text-zinc-400">天</span>
               </div>
-              <p className="text-[10px] text-zinc-500 mt-1.5 leading-relaxed">
+              <p className="text-[10px] text-zinc-400 mt-1.5 leading-relaxed">
                 {rulDays <= 7
                   ? "建议立即安排停机维护，避免突发故障"
                   : rulDays <= 14
@@ -134,19 +138,71 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
         )}
       </div>
 
+      {/* ROI Cost Impact */}
+      {analysisComplete && analysis.maintenance_cost != null && analysis.estimated_loss != null && (
+        <div
+          className="rounded-lg p-4 shrink-0"
+          style={{
+            background: "rgba(24,24,27,0.8)",
+            border: "1px solid #3f3f46",
+            animation: "fadeSlideIn 0.6s ease-out forwards",
+            opacity: 0,
+          }}
+        >
+          <h3 className="text-[11px] font-semibold text-zinc-400 mb-3 flex items-center gap-1.5">
+            <DollarSign size={12} className="text-cyan-400" />
+            成本风险核算 (Cost Impact)
+          </h3>
+
+          {/* Maintenance cost — green */}
+          <div
+            className="rounded-md px-3 py-2.5 mb-2"
+            style={{ background: "rgba(0,255,136,0.06)", border: "1px solid rgba(0,255,136,0.15)" }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-zinc-400">建议维修成本</span>
+              <span className="text-base font-bold tabular-nums" style={{ color: "#00ff88" }}>
+                ¥{analysis.maintenance_cost.toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          {/* Estimated loss — red with pulse */}
+          <div
+            className="rounded-md px-3 py-2.5 mb-2.5"
+            style={{ background: "rgba(255,51,102,0.06)", border: "1px solid rgba(255,51,102,0.15)" }}
+          >
+            <div className="flex items-center justify-between">
+              <span className="text-[11px] text-zinc-400">预测宕机损失</span>
+              <span
+                className="text-base font-bold tabular-nums"
+                style={{ color: "#ff3366", textShadow: "0 0 12px rgba(255,51,102,0.4)" }}
+              >
+                ¥{analysis.estimated_loss.toLocaleString()}
+              </span>
+            </div>
+          </div>
+
+          {/* Savings hint */}
+          <p className="text-[10px] text-center" style={{ color: "#00ff88" }}>
+            及时干预预计可挽回 ¥{(analysis.estimated_loss - analysis.maintenance_cost).toLocaleString()} 经济损失
+          </p>
+        </div>
+      )}
+
       {/* Evidence sources */}
-      <div className="rounded-lg flex-1 min-h-0 flex flex-col" style={{ background: "rgba(24,24,27,0.8)", border: "1px solid #27272a" }}>
+      <div className="rounded-lg flex-1 min-h-0 flex flex-col" style={{ background: "rgba(24,24,27,0.8)", border: "1px solid #3f3f46" }}>
         <button
           onClick={() => setShowEvidence(!showEvidence)}
           className="flex items-center justify-between px-4 py-3 w-full hover:bg-white/[0.02] transition-colors shrink-0"
-          style={{ borderBottom: showEvidence ? "1px solid #27272a" : "none" }}
+          style={{ borderBottom: showEvidence ? "1px solid #3f3f46" : "none" }}
         >
           <span className="text-[11px] font-semibold text-zinc-400 flex items-center gap-1.5">
             <BookOpen size={12} className="text-purple-400" />
             知识库证据引用
-            <span className="text-[10px] text-zinc-600">({evidenceSources.length})</span>
+            <span className="text-[10px] text-zinc-400">({evidenceSources.length})</span>
           </span>
-          {showEvidence ? <ChevronDown size={12} className="text-zinc-600" /> : <ChevronRight size={12} className="text-zinc-600" />}
+          {showEvidence ? <ChevronDown size={12} className="text-zinc-400" /> : <ChevronRight size={12} className="text-zinc-400" />}
         </button>
 
         {showEvidence && (
@@ -164,7 +220,7 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
                   <span
                     className="text-[10px] px-1.5 py-0.5 rounded-full tabular-nums"
                     style={{
-                      color: ev.confidence > 0.9 ? "#00ff88" : ev.confidence > 0.8 ? "#ffaa00" : "#64748b",
+                      color: ev.confidence > 0.9 ? "#00ff88" : ev.confidence > 0.8 ? "#ffaa00" : "#94a3b8",
                       background: ev.confidence > 0.9 ? "rgba(0,255,136,0.1)" : ev.confidence > 0.8 ? "rgba(255,170,0,0.1)" : "rgba(100,116,139,0.1)",
                       border: `1px solid ${ev.confidence > 0.9 ? "rgba(0,255,136,0.2)" : ev.confidence > 0.8 ? "rgba(255,170,0,0.2)" : "rgba(100,116,139,0.15)"}`,
                     }}
@@ -173,7 +229,7 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
                   </span>
                 </div>
                 <div
-                  className="text-[11px] text-zinc-500 leading-relaxed pl-3"
+                  className="text-[11px] text-zinc-400 leading-relaxed pl-3"
                   style={{ borderLeft: "2px solid rgba(170,85,255,0.25)" }}
                 >
                   <span className="text-zinc-400">&ldquo;</span>
@@ -184,7 +240,7 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
             ))}
 
             {evidenceSources.length === 0 && (
-              <div className="text-zinc-600 text-xs py-4 text-center">暂无证据引用</div>
+              <div className="text-zinc-400 text-xs py-4 text-center">暂无证据引用</div>
             )}
           </div>
         )}
@@ -196,7 +252,7 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
           className="rounded-lg p-4 shrink-0"
           style={{
             background: "rgba(24,24,27,0.8)",
-            border: orderApproved ? "1px solid rgba(0,255,136,0.3)" : "1px solid #27272a",
+            border: orderApproved ? "1px solid rgba(0,255,136,0.3)" : "1px solid #3f3f46",
             animation: "workOrderReveal 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards",
             opacity: 0,
           }}
@@ -208,14 +264,14 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
 
           <div className="rounded-md p-3 mb-3" style={{ background: "rgba(0,240,255,0.04)", border: "1px solid rgba(0,240,255,0.1)" }}>
             <div className="text-xs font-medium text-white mb-1.5">{workOrder.title}</div>
-            <p className="text-[11px] text-zinc-500 leading-relaxed whitespace-pre-wrap">
+            <p className="text-[11px] text-zinc-400 leading-relaxed whitespace-pre-wrap">
               {workOrder.description}
             </p>
           </div>
 
           {workOrder.suggested_parts.length > 0 && (
             <div className="mb-3">
-              <div className="text-[10px] text-zinc-600 mb-1.5 flex items-center gap-1">
+              <div className="text-[10px] text-zinc-400 mb-1.5 flex items-center gap-1">
                 <Package size={10} /> 建议备件
               </div>
               <div className="flex flex-wrap gap-1.5">
@@ -233,8 +289,8 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
           )}
 
           {workOrder.estimated_time && (
-            <div className="flex items-center gap-1.5 text-[11px] text-zinc-500 mb-3">
-              <Clock size={11} className="text-zinc-600" />
+            <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 mb-3">
+              <Clock size={11} className="text-zinc-400" />
               {workOrder.estimated_time}
             </div>
           )}
@@ -264,8 +320,11 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
           <div className="flex gap-2">
             {/* Approve button */}
             <button
-              onClick={() => setOrderApproved(true)}
-              disabled={orderApproved}
+              onClick={() => {
+                setOrderApproved(true);
+                onApprove?.();
+              }}
+              disabled={orderApproved || dispatching}
               className="flex-1 py-2.5 rounded-md text-xs font-semibold transition-all flex items-center justify-center gap-2"
               style={{
                 background: orderApproved
@@ -276,9 +335,14 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
                   : "1px solid rgba(0,240,255,0.4)",
                 color: orderApproved ? "#00ff88" : "#00f0ff",
                 boxShadow: orderApproved ? "none" : "0 0 15px rgba(0,240,255,0.15)",
+                opacity: dispatching && !orderApproved ? 0.7 : 1,
               }}
             >
-              {orderApproved ? (
+              {dispatching && !orderApproved ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" /> 推送中...
+                </>
+              ) : orderApproved ? (
                 <>
                   <CheckCircle size={14} /> 已派发
                 </>
@@ -335,9 +399,9 @@ export default function AgentActionPanel({ analysis, analysisComplete = false, o
 
       {/* Pending state — analysis not done yet */}
       {!hasWorkOrder && evidenceSources.length === 0 && (
-        <div className="rounded-lg p-6 text-center shrink-0" style={{ background: "rgba(24,24,27,0.8)", border: "1px solid #27272a" }}>
-          <ClipboardCheck size={24} className="text-zinc-700 mx-auto mb-2" />
-          <p className="text-[11px] text-zinc-600">等待 Agent 完成诊断后生成工单</p>
+        <div className="rounded-lg p-6 text-center shrink-0" style={{ background: "rgba(24,24,27,0.8)", border: "1px solid #3f3f46" }}>
+          <ClipboardCheck size={24} className="text-zinc-500 mx-auto mb-2" />
+          <p className="text-[11px] text-zinc-400">等待 Agent 完成诊断后生成工单</p>
         </div>
       )}
 

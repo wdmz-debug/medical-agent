@@ -91,14 +91,14 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
             className="relative w-full max-w-md h-full flex flex-col"
             style={{
               background: "rgba(10,10,14,0.97)",
-              borderLeft: "1px solid #27272a",
+              borderLeft: "1px solid #3f3f46",
               animation: "drawerSlideIn 0.25s ease-out forwards",
             }}
           >
             {/* Header */}
             <div
               className="flex items-center justify-between px-4 py-3 shrink-0"
-              style={{ borderBottom: "1px solid #27272a" }}
+              style={{ borderBottom: "1px solid #3f3f46" }}
             >
               <div className="flex items-center gap-2.5">
                 <div
@@ -112,7 +112,7 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-white">设备诊断助手</div>
-                  <div className="text-[10px] text-zinc-500 flex items-center gap-1.5">
+                  <div className="text-[10px] text-zinc-400 flex items-center gap-1.5">
                     <span>{deviceName}</span>
                     <span
                       className="w-1.5 h-1.5 rounded-full"
@@ -127,7 +127,7 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
               <button
                 onClick={() => setIsOpen(false)}
                 className="w-8 h-8 rounded-lg flex items-center justify-center hover:bg-white/5 transition-colors"
-                style={{ border: "1px solid #27272a" }}
+                style={{ border: "1px solid #3f3f46" }}
               >
                 <X size={15} className="text-zinc-400" />
               </button>
@@ -136,7 +136,7 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
             {/* Messages area */}
             <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
               {messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full text-zinc-600">
+                <div className="flex flex-col items-center justify-center h-full text-zinc-400">
                   <Bot size={36} className="mb-3 opacity-30" />
                   <p className="text-sm mb-1">向 Agent 提问</p>
                   <p className="text-[11px] text-center leading-relaxed">
@@ -172,7 +172,7 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
                           }
                         : {
                             background: "rgba(24,24,27,0.8)",
-                            border: "1px solid #27272a",
+                            border: "1px solid #3f3f46",
                             color: "#a1a1aa",
                           }
                     }
@@ -201,10 +201,10 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
                   </div>
                   <div
                     className="rounded-lg px-3 py-2.5 text-xs flex items-center gap-2"
-                    style={{ background: "rgba(24,24,27,0.8)", border: "1px solid #27272a" }}
+                    style={{ background: "rgba(24,24,27,0.8)", border: "1px solid #3f3f46" }}
                   >
                     <Loader2 size={12} className="text-purple-400 animate-spin" />
-                    <span className="text-zinc-500">分析中...</span>
+                    <span className="text-zinc-400">分析中...</span>
                   </div>
                 </div>
               )}
@@ -215,7 +215,7 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
             {/* Input area */}
             <div
               className="px-4 py-3 shrink-0"
-              style={{ borderTop: "1px solid #27272a", background: "rgba(15,15,20,0.8)" }}
+              style={{ borderTop: "1px solid #3f3f46", background: "rgba(15,15,20,0.8)" }}
             >
               <div className="flex gap-2">
                 <input
@@ -228,7 +228,7 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
                   className="flex-1 text-xs"
                   style={{
                     background: "rgba(24,24,27,0.8)",
-                    border: "1px solid #27272a",
+                    border: "1px solid #3f3f46",
                     borderRadius: "8px",
                     padding: "8px 12px",
                     color: "#e2e8f0",
@@ -248,15 +248,15 @@ export default function AgentChatDrawer({ deviceId, deviceName, deviceStatus, he
                     border:
                       input.trim() && !loading
                         ? "1px solid rgba(0,240,255,0.3)"
-                        : "1px solid #27272a",
+                        : "1px solid #3f3f46",
                     cursor: input.trim() && !loading ? "pointer" : "not-allowed",
                     opacity: input.trim() && !loading ? 1 : 0.4,
                   }}
                 >
                   {loading ? (
-                    <Loader2 size={14} className="text-zinc-500 animate-spin" />
+                    <Loader2 size={14} className="text-zinc-400 animate-spin" />
                   ) : (
-                    <Send size={14} className={input.trim() ? "text-cyan-400" : "text-zinc-600"} />
+                    <Send size={14} className={input.trim() ? "text-cyan-400" : "text-zinc-400"} />
                   )}
                 </button>
               </div>

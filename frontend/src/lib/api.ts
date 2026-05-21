@@ -83,3 +83,7 @@ export const sendChatMessage = (
     method: "POST",
     body: JSON.stringify({ message, history }),
   });
+
+// Dispatch (Webhook)
+export const dispatchWorkOrder = (deviceId: number) =>
+  fetchJSON(`/api/devices/${deviceId}/dispatch`, { method: "POST" });

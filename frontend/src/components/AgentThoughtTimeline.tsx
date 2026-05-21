@@ -97,7 +97,7 @@ export default function AgentThoughtTimeline({ steps, onRunAnalysis, loading, on
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 shrink-0" style={{ borderBottom: "1px solid #27272a" }}>
+      <div className="flex items-center justify-between px-4 py-3 shrink-0" style={{ borderBottom: "1px solid #3f3f46" }}>
         <div className="flex items-center gap-2">
           <Bot size={16} className="text-cyber-cyan" />
           <span className="text-sm font-semibold text-white">Agent 推理流</span>
@@ -139,7 +139,7 @@ export default function AgentThoughtTimeline({ steps, onRunAnalysis, loading, on
       <div className="flex-1 overflow-y-auto px-4 py-3">
         {/* Empty state */}
         {steps.length === 0 && !loading && (
-          <div className="flex flex-col items-center justify-center h-full text-zinc-600">
+          <div className="flex flex-col items-center justify-center h-full text-zinc-400">
             <Bot size={40} className="mb-3 opacity-30" />
             <p className="text-sm mb-1">等待 Agent 启动分析...</p>
             <p className="text-[11px]">点击右上角 &ldquo;运行诊断&rdquo; 触发</p>
@@ -163,7 +163,7 @@ export default function AgentThoughtTimeline({ steps, onRunAnalysis, loading, on
           <div className="flex items-center gap-2.5 mb-4 px-3 py-2.5 rounded-lg animate-fade-in" style={{ background: "rgba(0,240,255,0.05)", border: "1px solid rgba(0,240,255,0.1)" }}>
             <Loader2 size={14} className="text-cyan-400 animate-spin shrink-0" />
             <span className="text-xs text-cyan-400">Agent 正在接管系统并进行深度推演...</span>
-            <span className="ml-auto text-[10px] text-zinc-600 tabular-nums">{visibleCount}/{steps.length}</span>
+            <span className="ml-auto text-[10px] text-zinc-400 tabular-nums">{visibleCount}/{steps.length}</span>
           </div>
         )}
 
@@ -205,7 +205,7 @@ export default function AgentThoughtTimeline({ steps, onRunAnalysis, loading, on
                   className="ml-11 rounded-lg overflow-hidden transition-all duration-300"
                   style={{
                     background: "rgba(24,24,27,0.8)",
-                    border: `1px solid ${isOpen ? config.color + "25" : "#27272a"}`,
+                    border: `1px solid ${isOpen ? config.color + "25" : "#3f3f46"}`,
                     boxShadow: isLatest ? `0 0 12px ${config.color}15` : "none",
                   }}
                 >
@@ -215,8 +215,8 @@ export default function AgentThoughtTimeline({ steps, onRunAnalysis, loading, on
                   >
                     <div className="flex items-center gap-2 min-w-0">
                       {isOpen
-                        ? <ChevronDown size={12} className="text-zinc-500 shrink-0" />
-                        : <ChevronRight size={12} className="text-zinc-500 shrink-0" />}
+                        ? <ChevronDown size={12} className="text-zinc-400 shrink-0" />
+                        : <ChevronRight size={12} className="text-zinc-400 shrink-0" />}
                       <span className="text-xs font-medium text-white truncate">{step.action}</span>
                       {isLatest && (
                         <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse shrink-0" />
@@ -241,7 +241,7 @@ export default function AgentThoughtTimeline({ steps, onRunAnalysis, loading, on
                       >
                         {step.tool_used}
                       </span>
-                      <span className="text-[10px] text-zinc-600">{formatTime(step.timestamp)}</span>
+                      <span className="text-[10px] text-zinc-400">{formatTime(step.timestamp)}</span>
                     </div>
                   </button>
 
@@ -249,7 +249,7 @@ export default function AgentThoughtTimeline({ steps, onRunAnalysis, loading, on
                     <div className="px-3 pb-3 animate-fade-in">
                       <div
                         className="text-[11px] text-zinc-400 leading-relaxed whitespace-pre-wrap rounded-md p-3 font-mono"
-                        style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #1a1a1a" }}
+                        style={{ background: "rgba(0,0,0,0.3)", border: "1px solid #3f3f46" }}
                       >
                         {step.content}
                       </div>

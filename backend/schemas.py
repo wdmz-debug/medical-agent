@@ -131,6 +131,8 @@ class AgentAnalysisResponse(BaseModel):
     status: str
     health_score: int
     remaining_useful_life_days: Optional[int] = None
+    maintenance_cost: Optional[float] = None
+    estimated_loss: Optional[float] = None
     pipeline_steps: list[PipelineStep]
     evidence_sources: list[EvidenceSource]
     draft_work_order: DraftWorkOrder

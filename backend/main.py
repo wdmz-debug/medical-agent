@@ -91,6 +91,15 @@ def health():
     return {"status": "ok"}
 
 
+@app.post("/api/devices/{device_id}/dispatch")
+def dispatch_work_order(device_id: int):
+    print("\033[92m" + "=" * 60 + "\033[0m")
+    print("\033[92m [Webhook Triggered] 正在向飞书/钉钉企业群发送派发指令...\033[0m")
+    print(f"\033[92m [DISPATCH] 设备 ID: {device_id} | 工单已送达一线维保终端！\033[0m")
+    print("\033[92m" + "=" * 60 + "\033[0m")
+    return {"status": "ok", "message": "工单已推送至飞书/钉钉", "device_id": device_id}
+
+
 if __name__ == "__main__":
     import uvicorn
     uvicorn.run(app, host="0.0.0.0", port=8000)
